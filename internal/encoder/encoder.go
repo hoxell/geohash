@@ -15,8 +15,8 @@ type Encoder struct {
 // the UTF-8 characters up until the largest power of 2
 func NewEncoder(alphabet string) *Encoder {
 	var encoder Encoder
-	encoder.alphabet = []rune(alphabet)
-	encoder.nBitsPerRune = uint(math.Log2(float64(len(encoder.alphabet))))
+	encoder.nBitsPerRune = uint(math.Log2(float64(len(alphabet))))
+	encoder.alphabet = []rune(alphabet)[:uint(math.Exp2(float64(encoder.nBitsPerRune)))]
 	return &encoder
 }
 

@@ -51,3 +51,15 @@ func TestEncodeCustomAlphabet(t *testing.T) {
 	}
 
 }
+
+func TestEncodeCustomAlphabetNotPowerOfTwoExpectTruncate(t *testing.T) {
+	alphabet := "abcde"
+	encoder := NewEncoder(alphabet)
+	if encoder.nBitsPerRune != 2 {
+		t.Errorf("Expected number of bits per code point: 2. Actual value: %d", encoder.nBitsPerRune)
+	}
+	if string(encoder.alphabet) != "abcd" {
+		t.Errorf("Expected alphabet 'abcd', got '%s'", string(encoder.alphabet))
+	}
+
+}
