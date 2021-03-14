@@ -26,6 +26,11 @@ func NewEncoder(alphabet string) *Encoder {
 	return &encoder
 }
 
+// Encode encodes value using the encoder's alphabet.
+// If log2(base_of_alphabet) * n != 64 for some integer n, the most
+// significant code point (i.e. rune) will encode only
+// 64%log2(base_of_alphabet) bits.
+// That is, a base32 alphabet will result in a hash of length 13
 func (encoder *Encoder) Encode(value uint64) []rune {
 	nRunes := uint(math.Ceil(64.0 / float64(encoder.nBitsPerRune)))
 	encoded := make([]rune, nRunes)
