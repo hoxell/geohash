@@ -23,6 +23,29 @@ func TestEncoding(t *testing.T) {
 	}
 }
 
+type EncodingPrecisionTest struct {
+	lat       float64
+	lon       float64
+	precision uint8
+	hash      string
+}
+
+var EncodingPrecisionTests = []EncodingPrecisionTest{
+	{1.0, 1.0, 4, `s00t`},
+	{17.123456, 45.987654, 5, `t509q`},
+	{-17.123456, 45.987654, 6, `mhbww6`},
+	{-17.123456, -45.987654, 20, `6uzq9dbb9ury`},
+	{-17.123456, -45.987654, 0, ``},
+}
+
+func TestEncodingPrecision(t *testing.T) {
+	for _, test := range EncodingPrecisionTests {
+		if hash := EncodePrecision(test.lat, test.lon, test.precision); hash != test.hash {
+			t.Errorf("Expected %s, got %s", test.hash, hash)
+		}
+	}
+}
+
 type segmentIndex struct {
 	lat uint32
 	lon uint32
