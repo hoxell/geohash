@@ -2,6 +2,8 @@ package geohash
 
 import (
 	"math"
+
+	"github.com/hoxovic/geohash/internal/encoder"
 )
 
 // EncodePrecision computes the geohash for lat, lon and returns the precision
@@ -18,8 +20,11 @@ func Encode(lat, lon float64) string {
 	latSegmentIdx := computeSegmentIdx(lat, 90)
 	lonSegmentIdx := computeSegmentIdx(lon, 180)
 	mortonCode := mortonCode(latSegmentIdx, lonSegmentIdx)
-	encoded := base32encode(mortonCode)
-	return encoded
+	// Base32 -> 60bits is the greates multiple of 5bits that is less than 64 bits.
+	// Discard the 4 least significant bits.
+	mortonCode >>= 4
+	encoded := encoder.Base32encoder.Encode(mortonCode)
+	return string(encoded[1:])
 }
 
 // Compute the index of the subsegment of the 2^32 equally sized discretized
