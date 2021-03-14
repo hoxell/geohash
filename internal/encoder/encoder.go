@@ -8,6 +8,7 @@ import (
 type Encoder struct {
 	nBitsPerRune uint
 	alphabet     []rune
+	runeToValue  map[rune]rune
 }
 
 // NewEncoder creates a new encoder object using the provided UTF-8 alphabet.
@@ -17,6 +18,11 @@ func NewEncoder(alphabet string) *Encoder {
 	var encoder Encoder
 	encoder.nBitsPerRune = uint(math.Log2(float64(len(alphabet))))
 	encoder.alphabet = []rune(alphabet)[:uint(math.Exp2(float64(encoder.nBitsPerRune)))]
+	decodeMap := make(map[rune]rune)
+	for i, codePoint := range encoder.alphabet {
+		decodeMap[codePoint] = rune(i)
+	}
+	encoder.runeToValue = decodeMap
 	return &encoder
 }
 
@@ -29,6 +35,15 @@ func (encoder *Encoder) encode(value uint64) []rune {
 		value >>= encoder.nBitsPerRune
 	}
 	return encoded
+}
+
+func (encoder *Encoder) decode(sequence []rune) uint64 {
+	var decoded uint64 = 0
+	for _, codePoint := range sequence {
+		decoded <<= encoder.nBitsPerRune
+		decoded += uint64(encoder.runeToValue[codePoint])
+	}
+	return decoded
 }
 
 var Base32encoder = NewEncoder("0123456789bcdefghjkmnpqrstuvwxyz")

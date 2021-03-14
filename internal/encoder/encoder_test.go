@@ -15,10 +15,10 @@ var alphabetLengthTests = []alphabetLengthTest{
 }
 
 func TestNewEncoder(t *testing.T) {
-	for _, expected := range alphabetLengthTests {
-		encoder := NewEncoder(expected.alphabet)
-		if encoder.nBitsPerRune != expected.numBits {
-			t.Errorf("Expected nBitsPerRune %d, actual nBitsPerRune %d", expected.numBits, encoder.nBitsPerRune)
+	for _, test := range alphabetLengthTests {
+		encoder := NewEncoder(test.alphabet)
+		if encoder.nBitsPerRune != test.numBits {
+			t.Errorf("Expected nBitsPerRune %d, actual nBitsPerRune %d", test.numBits, encoder.nBitsPerRune)
 		}
 	}
 }
@@ -78,4 +78,43 @@ func TestEncodeCustomAlphabetNotPowerOfTwoExpectTruncate(t *testing.T) {
 		t.Errorf("Expected alphabet 'abcd', got '%s'", string(encoder.alphabet))
 	}
 
+}
+
+type DecodeTest struct {
+	alphabet string
+	hash     []rune
+	val      uint64
+}
+
+var DecodeTests = []DecodeTest{
+	{"abcd", []rune("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaba"), 4},
+	{"0123456789bcdefghjkmnpqrstuvwxyz", []rune("012345678910"), 1199710202504224},
+}
+
+func TestDecode(t *testing.T) {
+	for _, test := range DecodeTests {
+		encoder := NewEncoder(test.alphabet)
+		if decoded := encoder.decode(test.hash); decoded != test.val {
+			t.Errorf("Expected %d, got %d", test.val, decoded)
+		}
+	}
+}
+
+type EncodeDecodeReversibleTest struct {
+	alphabet string
+	val      uint64
+}
+
+var ReversibleEncodingDecodingTests = [...]EncodeDecodeReversibleTest{
+	{"asdfg", 1234},
+	{"0123456789bcdefghjkmnpqrstuvwxyz", 1199710202504224},
+}
+
+func TestEncodeDecodeReversible(t *testing.T) {
+	for _, test := range ReversibleEncodingDecodingTests {
+		encoder := NewEncoder(test.alphabet)
+		if decoded := encoder.decode(encoder.encode(test.val)); decoded != test.val {
+			t.Errorf("Expected %d, got %d", test.val, decoded)
+		}
+	}
 }
