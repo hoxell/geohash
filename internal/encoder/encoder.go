@@ -26,8 +26,8 @@ func NewEncoder(alphabet string) *Encoder {
 	return &encoder
 }
 
-func (encoder *Encoder) encode(value uint64) []rune {
-	nRunes := 64 / encoder.nBitsPerRune
+func (encoder *Encoder) Encode(value uint64) []rune {
+	nRunes := uint(math.Ceil(64.0 / float64(encoder.nBitsPerRune)))
 	encoded := make([]rune, nRunes)
 	bitPattern := uint64(math.Exp2(float64(encoder.nBitsPerRune))) - 1
 	for i := uint(0); i < nRunes; i++ {

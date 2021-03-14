@@ -29,14 +29,14 @@ type encodeDefaultAlphabetTest struct {
 }
 
 var encodeDefaultAlphabetTests = []encodeDefaultAlphabetTest{
-	{4, []rune("000000000004")},
-	{128, []rune("000000000040")},
-	{^uint64(0), []rune("zzzzzzzzzzzz")},
+	{4, []rune("0000000000004")},
+	{128, []rune("0000000000040")},
+	{^uint64(0), []rune("gzzzzzzzzzzzz")},
 }
 
 func TestEncodeDefaultAlphabet(t *testing.T) {
 	for _, test := range encodeDefaultAlphabetTests {
-		encoded := Base32encoder.encode(test.val)
+		encoded := Base32encoder.Encode(test.val)
 		for i, codePoint := range encoded {
 			if codePoint != test.encoded[i] {
 				t.Errorf("Expected %s, got %s", string(test.encoded), string(encoded))
@@ -59,7 +59,7 @@ var customAlphabetEncodingTests = []customAlphabetEncodingTest{
 func TestEncodeCustomAlphabet(t *testing.T) {
 	for _, test := range customAlphabetEncodingTests {
 		encoder := NewEncoder(test.alphabet)
-		encoded := encoder.encode(test.value)
+		encoded := encoder.Encode(test.value)
 		for i, codePoint := range encoded {
 			if codePoint != test.encoded[i] {
 				t.Errorf("Expected %s, got %s", string(test.encoded), string(encoded))
@@ -113,7 +113,7 @@ var ReversibleEncodingDecodingTests = [...]EncodeDecodeReversibleTest{
 func TestEncodeDecodeReversible(t *testing.T) {
 	for _, test := range ReversibleEncodingDecodingTests {
 		encoder := NewEncoder(test.alphabet)
-		if decoded := encoder.decode(encoder.encode(test.val)); decoded != test.val {
+		if decoded := encoder.decode(encoder.Encode(test.val)); decoded != test.val {
 			t.Errorf("Expected %d, got %d", test.val, decoded)
 		}
 	}
