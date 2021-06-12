@@ -42,7 +42,10 @@ func (encoder *Encoder) Encode(value uint64) []rune {
 	return encoded
 }
 
-func (encoder *Encoder) decode(sequence []rune) uint64 {
+// Decode sequence of runes to corresponding decimal value
+// TODO: Handle error when user tries to decode a string with code points not in
+// the encoder object's alphabet
+func (encoder *Encoder) Decode(sequence []rune) uint64 {
 	var decoded uint64 = 0
 	for _, codePoint := range sequence {
 		decoded <<= encoder.nBitsPerRune

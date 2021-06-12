@@ -94,7 +94,7 @@ var DecodeTests = []DecodeTest{
 func TestDecode(t *testing.T) {
 	for _, test := range DecodeTests {
 		encoder := NewEncoder(test.alphabet)
-		if decoded := encoder.decode(test.hash); decoded != test.val {
+		if decoded := encoder.Decode(test.hash); decoded != test.val {
 			t.Errorf("Expected %d, got %d", test.val, decoded)
 		}
 	}
@@ -113,7 +113,7 @@ var ReversibleEncodingDecodingTests = [...]EncodeDecodeReversibleTest{
 func TestEncodeDecodeReversible(t *testing.T) {
 	for _, test := range ReversibleEncodingDecodingTests {
 		encoder := NewEncoder(test.alphabet)
-		if decoded := encoder.decode(encoder.Encode(test.val)); decoded != test.val {
+		if decoded := encoder.Decode(encoder.Encode(test.val)); decoded != test.val {
 			t.Errorf("Expected %d, got %d", test.val, decoded)
 		}
 	}
