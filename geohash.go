@@ -6,12 +6,14 @@ import (
 	"github.com/hoxovic/geohash/internal/encoder"
 )
 
+const maxHashLength = 12
+
 // EncodePrecision computes the geohash for lat, lon and returns the precision
 // most significant code points of the hash.
 // precision is bounded to [0, 12]
 func EncodePrecision(lat, lon float64, precision uint8) string {
 	fullHash := []rune(Encode(lat, lon))
-	desiredPrecision := uint8(math.Min(12, float64(precision)))
+	desiredPrecision := uint8(math.Min(float64(maxHashLength), float64(precision)))
 	return string(fullHash[:desiredPrecision])
 }
 
@@ -25,6 +27,18 @@ func Encode(lat, lon float64) string {
 	mortonCode >>= 4
 	encoded := encoder.Base32encoder.Encode(mortonCode)
 	return string(encoded[1:])
+}
+
+// Decode geohash into latitude and longitude
+func Decode(hash string) (latitude float64, longitude float64) {
+	if len(hash) > maxHashLength {
+		hash = hash[:maxHashLength]
+	}
+	decimalValue := encoder.Base32encoder.Decode([]rune(hash))
+	longitudeIndex := bitSplit(decimalValue >> 1)
+	latitudeIndex := bitSplit(decimalValue)
+
+	return latitude, longitude
 }
 
 // Compute the index of the subsegment of the 2^32 equally sized discretized
@@ -54,4 +68,14 @@ func bitSpreadEven(x uint32) uint64 {
 	spread = (spread | (spread << 2)) & 0x3333333333333333
 	spread = (spread | (spread << 1)) & 0x5555555555555555
 	return spread
+}
+
+func bitSplit(value uint64) uint32 {
+	value &= 0x5555555555555555
+	value = (value | (value >> 1)) & 0x3333333333333333
+	value = (value | (value >> 2)) & 0x0F0F0F0F0F0F0F0F
+	value = (value | (value >> 4)) & 0x00FF00FF00FF00FF
+	value = (value | (value >> 8)) & 0x0000FFFF0000FFFF
+	value = (value | (value >> 16)) & 0x0000000FFFFFFFF
+	return uint32(value)
 }
