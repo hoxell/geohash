@@ -15,7 +15,7 @@ type Encoder struct {
 // If len(alphabet) is not a power of 2, the encoder will use only
 // the UTF-8 characters up until the largest power of 2
 func NewEncoder(alphabet string) *Encoder {
-	var encoder Encoder
+	encoder := new(Encoder)
 	encoder.nBitsPerRune = uint(math.Log2(float64(len(alphabet))))
 	encoder.alphabet = []rune(alphabet)[:uint(math.Exp2(float64(encoder.nBitsPerRune)))]
 	decodeMap := make(map[rune]rune)
@@ -23,7 +23,7 @@ func NewEncoder(alphabet string) *Encoder {
 		decodeMap[codePoint] = rune(i)
 	}
 	encoder.runeToValue = decodeMap
-	return &encoder
+	return encoder
 }
 
 // Encode encodes value using the encoder's alphabet.
