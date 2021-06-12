@@ -62,14 +62,3 @@ func TestMortonCode(t *testing.T) {
 		}
 	}
 }
-
-func TestBase32Encode(t *testing.T) {
-	expected := map[uint64]string{
-		0b10111010110001001110010011100010: `0000005usmkf`,
-	}
-	for value, hash := range expected {
-		if val := base32encode(value); val != hash {
-			t.Errorf("Got %s, but expected %s", val, hash)
-		}
-	}
-}

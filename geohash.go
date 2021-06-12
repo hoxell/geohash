@@ -55,18 +55,3 @@ func bitSpreadEven(x uint32) uint64 {
 	spread = (spread | (spread << 1)) & 0x5555555555555555
 	return spread
 }
-
-// Must only contain one-byte runes atm
-const base32alphabet = `0123456789bcdefghjkmnpqrstuvwxyz`
-
-func base32encode(value uint64) string {
-	const hashLength = 12
-	const nBitsPerCodePoint = 5
-	value >>= 64 - hashLength*nBitsPerCodePoint
-	var encoded [hashLength]byte
-	for i := 0; i < hashLength; i++ {
-		encoded[hashLength-1-i] = base32alphabet[value&0x1F]
-		value >>= nBitsPerCodePoint
-	}
-	return string(encoded[:])
-}
