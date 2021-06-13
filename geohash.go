@@ -20,7 +20,7 @@ func Encode(lat, lon float64) string {
 	latSegmentIdx := computeSegmentIdx(lat, 90)
 	lonSegmentIdx := computeSegmentIdx(lon, 180)
 	mortonCode := mortonCode(latSegmentIdx, lonSegmentIdx)
-	// Base32 -> 60bits is the greates multiple of 5bits that is less than 64 bits.
+	// Base32 -> 60bits is the greatest multiple of 5bits that is less than 64 bits.
 	// Discard the 4 least significant bits.
 	mortonCode >>= 4
 	encoded := encoder.Base32encoder.Encode(mortonCode)
