@@ -1,6 +1,7 @@
 package encoder
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -9,6 +10,14 @@ type Encoder struct {
 	nBitsPerRune uint
 	alphabet     []rune
 	runeToValue  map[rune]rune
+}
+
+// GetZeroRune returns the rune encoding the value 0
+func (encoder *Encoder) GetZeroRune() (rune, error) {
+	if len(encoder.alphabet) < 1 {
+		return '0', fmt.Errorf("Empty alphabet")
+	}
+	return encoder.alphabet[0], nil
 }
 
 // NewEncoder creates a new encoder object using the provided UTF-8 alphabet.
